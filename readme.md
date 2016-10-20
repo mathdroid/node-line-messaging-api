@@ -52,7 +52,7 @@ By default, webhook will listen on port `5463`. You should change it if it inter
 
 ## Messages
 
-WIP docs.
+
 
 # API
 
@@ -72,6 +72,16 @@ WIP docs.
   - `.getProfile(userId)` => Promise
 
   - `.leave({groupId, roomId})` => Promise //pick one between groupId or roomId
+
+- `Messages`
+
+  - `new Messages()` // creates an empty array of messages. Maximum 5 messages following LINE's spec.
+
+  - `.addText(message)` // message may be a string or an object with .text property. Chainable.
+
+  - `.addImage, .addVideo, etc` (WIP)
+
+  - `.commit()` // returns the payload (array of messages)
 
 # Installation
 

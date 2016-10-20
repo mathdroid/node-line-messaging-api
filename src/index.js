@@ -1,4 +1,5 @@
 import Bot from './bot'
+import Messages from './messages'
 //
 // let bot = new Bot('secret', 'token')
 // bot.on('msg', msg => console.log(msg))
@@ -10,5 +11,8 @@ import Bot from './bot'
 // let arr = [{}]
 
 // console.log(Array.isArray(arr[0]))
-
+// console.log(Messages)
+// let msg = new Messages()
+// console.log(msg.text('hi').commit())
+export { Messages }
 export default Bot
