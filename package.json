@@ -20,6 +20,10 @@
   },
   "author": "Muhammad Mustadi <muhammad.mustadi@gmail.com> (http://mustadi.xyz)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mathdroid/node-line-messaging-api.git"
+  },
   "dependencies": {
     "axios": "^0.15.1",
     "babel-cli": "^6.16.0",
