@@ -4,7 +4,6 @@
 
 ```sh
 npm install --save node-line-messaging-api
-
 ```
 
 # Usage
