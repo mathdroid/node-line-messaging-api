@@ -1,0 +1,9 @@
+*.log
+.package.json
+
+src/
+
+.babelrc
+.git
+.gitignore
+yarn.lock
