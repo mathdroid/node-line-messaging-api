@@ -42,11 +42,13 @@ There are some other events from `examples/` (WIP).
 Listen-able events (WIP):
 
 ```js
-const _events = 'events' // all events, returns an array of events.
+const _webhook = 'webhook' // emitted when webhook listener is created successfully
 
-const _eventTypes = ['message', 'follow', 'unfollow', 'join', 'leave', 'postback', 'beacon'] // event types, returns that specific event.
+const _events = 'events' // emitted on all events, returns an array of events.
 
-const _messageTypes = ['text', 'image', 'video', 'audio', 'location', 'sticker'] // message types (more specific), returns that specific event (type === 'message').
+const _eventTypes = ['message', 'follow', 'unfollow', 'join', 'leave', 'postback', 'beacon'] // emitted on parsing event types, returns that specific event.
+
+const _messageTypes = ['text', 'image', 'video', 'audio', 'location', 'sticker'] // emitted on parsing message types (more specific), returns that specific event (type === 'message').
 ```
 
 
@@ -56,7 +58,7 @@ By default, webhook will listen on port `5463`. You should change it if it inter
 
 ## Messages
 
-
+`Messages` class is a helper in composing your messages.
 
 # API
 
@@ -67,15 +69,19 @@ By default, webhook will listen on port `5463`. You should change it if it inter
 
   - `new LineBot(secret, token, options)`
 
-  - `.reply(replyToken, messages)` => Promise
+  - `.on(event, function callback (eventContent) {})` // Standard event listener. Events are shown above.
 
-  - `.push(channel, messages)` => Promise
+  - `.onText(regexp, function callback (event, match) {})` // Executes callback everytime a message.text matches regexp
+
+  - `.replyMessage(replyToken, messages)` => Promise
+
+  - `.pushMessage(channel, messages)` => Promise
 
   - `.getContent(messageId)` => Promise
 
   - `.getProfile(userId)` => Promise
 
-  - `.leave({groupId, roomId})` => Promise //pick one between groupId or roomId
+  - `.leaveChannel({groupId, roomId})` => Promise //pick one between groupId or roomId
 
 - `Messages`
 

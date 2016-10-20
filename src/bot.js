@@ -31,6 +31,11 @@ class LineBot extends EventEmitter {
     this._Webhook = new Webhook(this.token, this.options.webhook, this.processEvents.bind(this), (webhookStarted) => {
       this.emit('webhook', webhookStarted)
     })
+    this._regexpCallback = []
+  }
+
+  onText (regexp, callback) {
+    this._regexpCallback.push({regexp, callback})
   }
 
   _request (method, path, payload) {
@@ -58,6 +63,12 @@ class LineBot extends EventEmitter {
       case 'message':
         this.emit('message', event)
         this.emit(event.message.type, event)
+        if (event.message.type === 'text' && event.message.text) {
+          this._regexpCallback.forEach(rgx => {
+            const result = rgx.regexp.exec(event.message.text)
+            if (result) rgx.callback(event, result)
+          })
+        }
         break
       case 'follow':
         this.emit('follow', event)
@@ -82,7 +93,7 @@ class LineBot extends EventEmitter {
     }
   }
 
-  push (channel, messages) {
+  pushMessage (channel, messages) {
     const pushEndpoint = '/v2/bot/message/push'
     messages = Array.isArray(messages) ? messages : [messages]
     if (messages.length < 1 || messages.length > 5) return Promise.reject('Invalid messages length. (1 - 5)')
@@ -93,7 +104,7 @@ class LineBot extends EventEmitter {
     return this._request('post', pushEndpoint, payload).bind(this)
   }
 
-  reply (replyToken, messages) {
+  replyMessage (replyToken, messages) {
     const replyEndpoint = '/v2/bot/message/reply'
     messages = Array.isArray(messages) ? messages : [messages]
     if (messages.length < 1 || messages.length > 5) return Promise.reject('Invalid messages length. (1 - 5)')
@@ -116,7 +127,7 @@ class LineBot extends EventEmitter {
     return this._request('get', profileEndpoint, null).bind(this)
   }
 
-  leave (channel) {
+  leaveChannel (channel) {
     let channelId = channel && (channel.groupId || channel.roomId)
     if (!channelId) return Promise.reject('No channel Id.')
     const leaveEndpoint = channel.groupId ? `/v2/bot/group/${channel}/leave` : `/v2/bot/room/${channel}/leave`
