@@ -2,6 +2,14 @@
   "name": "node-line-messaging-api",
   "version": "0.3.0",
   "description": "LINE Messaging API Unofficial SDK",
+  "keywords": [
+    "line",
+    "line bot",
+    "line bot api",
+    "line messaging",
+    "line messaging api",
+    "bot"
+  ],
   "main": "build/index.js",
   "scripts": {
     "prepublish": "npm run build",
