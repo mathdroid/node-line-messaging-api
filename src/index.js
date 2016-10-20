@@ -1,6 +1,6 @@
 import Bot from './bot'
 //
-let bot = new Bot('secret', 'token')
+// let bot = new Bot('secret', 'token')
 // bot.on('msg', msg => console.log(msg))
 // // console.log(bot)
 // bot.on('webhook', w => console.log(`bot listens on port ${w}.`))

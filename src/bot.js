@@ -96,7 +96,14 @@ class LineBot extends EventEmitter {
   }
 
   reply (replyToken, messages) {
-
+    const replyEndpoint = '/v2/bot/message/reply'
+    messages = Array.isArray(messages) ? messages : [messages]
+    if (messages.length < 1 || messages.length > 5) return Promise.reject('Invalid messages length. (1 - 5)')
+    let payload = {
+      'replyToken': `${replyToken}`,
+      'messages': `${messages}`
+    }
+    return this._request(replyEndpoint, payload).bind(this)
   }
 }
 

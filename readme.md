@@ -61,9 +61,9 @@ WIP docs.
 
   - `new LineBot(secret, token, options)`
 
-  - `.reply(replyToken, messages)` => Promise (WIP)
+  - `.reply(replyToken, messages)` => Promise
 
-  - `.push(channel, messages)` => Promise (WIP)
+  - `.push(channel, messages)` => Promise
 
 # Installation
 
