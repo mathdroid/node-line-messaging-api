@@ -7,6 +7,8 @@ const _eventTypes = ['message', 'follow', 'unfollow', 'join', 'leave', 'postback
 const _messageTypes = ['text', 'image', 'video', 'audio', 'location', 'sticker']
 const _sourceTypes = ['user', 'group', 'room']
 
+const _baseUrl = 'https://api.line.me'
+
 class LineBot extends EventEmitter {
 
   static get eventTypes () {
@@ -31,8 +33,16 @@ class LineBot extends EventEmitter {
     })
   }
 
-  request (path) {
-    return axios.get(path)
+  _request (path, payload) {
+    return axios({
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.token}`
+      },
+      url: _baseUrl + path,
+      data: payload
+    })
   }
 
   processEvents (events) {
@@ -75,11 +85,18 @@ class LineBot extends EventEmitter {
   }
 
   push (channel, messages) {
-
+    const pushEndpoint = '/v2/bot/message/push'
+    messages = Array.isArray(messages) ? messages : [messages]
+    if (messages.length < 1 || messages.length > 5) return Promise.reject('Invalid messages length. (1 - 5)')
+    let payload = {
+      'to': `${channel}`,
+      'messages': `${messages}`
+    }
+    return this._request(pushEndpoint, payload).bind(this)
   }
 
   reply (replyToken, messages) {
-    
+
   }
 }
 
