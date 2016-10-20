@@ -48,18 +48,16 @@ class LineBot extends EventEmitter {
   processEvents (events) {
     this.emit('events', events)
     // `events` is a Webhook Event Object -- https://devdocs.line.me/en/#webhook-event-object
-    // const processEventType = eventType => {
-    //   if (event.type === eventType)
-    // }
-    // LineBot.eventTypes.forEach()
     events.forEach(this.parseOneEvent.bind(this))
   }
 
   parseOneEvent (event) {
     this.emit('event', event)
+    event.type = event.type || ''
     switch (event.type) {
       case 'message':
         this.emit('message', event)
+        this.emit(event.message.type, event)
         break
       case 'follow':
         this.emit('follow', event)
