@@ -1,7 +1,7 @@
 class Messages {
   constructor () {
     this._payload = []
-    this.text = this.text.bind(this)
+    this.addText = this.addText.bind(this)
   }
 
   addText (message) {

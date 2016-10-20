@@ -13,6 +13,6 @@ import Messages from './messages'
 // console.log(Array.isArray(arr[0]))
 // console.log(Messages)
 // let msg = new Messages()
-// console.log(msg.text('hi').commit())
+// console.log(msg.addText('hi').addText('lol').addText({text: 'harambe'}).commit())
 export { Messages }
 export default Bot
