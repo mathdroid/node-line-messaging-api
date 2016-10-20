@@ -35,12 +35,14 @@ There are some other events from `examples/` (WIP).
 
 ## Events
 
-WIP:
+Listen-able events (WIP):
 
 ```js
-const _eventTypes = ['message', 'follow', 'unfollow', 'join', 'leave', 'postback', 'beacon']
+const _events = 'events' // all events, returns an array of events.
 
-const _messageTypes = ['text', 'image', 'video', 'audio', 'location', 'sticker']
+const _eventTypes = ['message', 'follow', 'unfollow', 'join', 'leave', 'postback', 'beacon'] // event types, returns that specific event.
+
+const _messageTypes = ['text', 'image', 'video', 'audio', 'location', 'sticker'] // message types (more specific), returns that specific event (type === 'message').
 ```
 
 
@@ -64,6 +66,12 @@ WIP docs.
   - `.reply(replyToken, messages)` => Promise
 
   - `.push(channel, messages)` => Promise
+
+  - `.getContent(messageId)` => Promise
+
+  - `.getProfile(userId)` => Promise
+
+  - `.leave({groupId, roomId})` => Promise //pick one between groupId or roomId
 
 # Installation
 

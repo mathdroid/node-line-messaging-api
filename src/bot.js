@@ -33,15 +33,15 @@ class LineBot extends EventEmitter {
     })
   }
 
-  _request (path, payload) {
+  _request (method, path, payload) {
     return axios({
-      method: 'post',
+      method: method,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.token}`
       },
       url: _baseUrl + path,
-      data: payload
+      data: payload || {}
     })
   }
 
@@ -90,7 +90,7 @@ class LineBot extends EventEmitter {
       'to': `${channel}`,
       'messages': `${messages}`
     }
-    return this._request(pushEndpoint, payload).bind(this)
+    return this._request('post', pushEndpoint, payload).bind(this)
   }
 
   reply (replyToken, messages) {
@@ -101,7 +101,26 @@ class LineBot extends EventEmitter {
       'replyToken': `${replyToken}`,
       'messages': `${messages}`
     }
-    return this._request(replyEndpoint, payload).bind(this)
+    return this._request('post', replyEndpoint, payload).bind(this)
+  }
+
+  getContent (messageId) {
+    if (!messageId || typeof messageId !== 'string') return Promise.reject('No message Id.')
+    const contentEndpoint = `/v2/bot/message/${messageId}/content`
+    return this._request('get', contentEndpoint, null).bind(this)
+  }
+
+  getProfile (userId) {
+    if (!userId || typeof userId !== 'string') return Promise.reject('No user Id.')
+    const profileEndpoint = `/v2/bot/profile/${userId}`
+    return this._request('get', profileEndpoint, null).bind(this)
+  }
+
+  leave (channel) {
+    let channelId = channel && (channel.groupId || channel.roomId)
+    if (!channelId) return Promise.reject('No channel Id.')
+    const leaveEndpoint = channel.groupId ? `/v2/bot/group/${channel}/leave` : `/v2/bot/room/${channel}/leave`
+    return this._request('post', leaveEndpoint, null).bind(this)
   }
 }
 
