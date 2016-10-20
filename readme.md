@@ -10,7 +10,7 @@ npm install --save node-line-messaging-api
 # Usage
 
 ```js
-import Bot from 'node-line-messaging-api'
+import Bot, { Messages } from 'node-line-messaging-api'
 
 const SECRET = 'YOURSECRETHERE' // Line@ APP SECRET
 
@@ -28,6 +28,10 @@ bot.on('events', e => console.dir(e))
 
 // on Message event
 bot.on('message', m => console.log(`incoming message: ${m}`))
+
+let msgs = new Messages()
+msgs.addText('HELLO WORLD!').addText({text: 'harambe4lyf'})
+bot.push('CHANNELXXXXXXXX', msgs.commit())
 
 ```
 
