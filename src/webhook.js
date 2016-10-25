@@ -35,11 +35,11 @@ class Webhook {
     const events = req.body && req.body.events
     if (events) {
       // console.log(this)
+      this.callback(events)
       res.send('OK')
-      return this.callback(events)
     } else {
       next('no events found')
-      return null
+      // return null
     }
   }
 }
