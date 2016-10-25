@@ -28,8 +28,8 @@ class LineBot extends EventEmitter {
     this.secret = secret
     this.token = token
     this.options = options
-    this._Webhook = new Webhook(this.token, this.options.webhook, this.processEvents.bind(this), (webhookStarted) => {
-      this.emit('webhook', webhookStarted)
+    this._Webhook = new Webhook(this.token, this.options.webhook, this.processEvents.bind(this), (whPort) => {
+      this.emit('webhook', whPort)
     })
     this._regexpCallback = []
   }

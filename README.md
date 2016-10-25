@@ -26,11 +26,13 @@ bot.on('webhook', w => console.log(`bot listens on port ${w}.`))
 bot.on('events', e => console.dir(e))
 
 // on Message event
-bot.on('message', m => console.log(`incoming message: ${m}`))
+bot.on('message', m => console.log(`incoming message: ${m.message}`))
 
 let msgs = new Messages()
+
 msgs.addText('HELLO WORLD!').addText({text: 'harambe4lyf'})
-bot.push('CHANNELXXXXXXXX', msgs.commit())
+
+bot.pushMessage('CHANNELXXXXXXXX', msgs.addText('FOO BAR BAZ').commit()) // HELLO WORLD! -- harambe4lyf -- FOO BAR BAZ
 
 ```
 
@@ -116,7 +118,7 @@ yarn add node-line-messaging-api
 
 5. Issue a `TOKEN` and note it.
 
-6. Go to whitelist, add your IP Address.
+6. Go to server whitelist, add your IP Address.
 
 7. Create your bot, input your `APP_SECRET` and `TOKEN`.
 
