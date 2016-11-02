@@ -32,6 +32,8 @@ class LineBot extends EventEmitter {
       this.emit('webhook', whPort)
     })
     this._regexpCallback = []
+
+    this._request = this._request.bind(this)
   }
 
   onText (regexp, callback) {
@@ -101,7 +103,7 @@ class LineBot extends EventEmitter {
       'to': `${channel}`,
       'messages': `${messages}`
     }
-    return this._request('post', pushEndpoint, payload).bind(this)
+    return this._request('post', pushEndpoint, payload)
   }
 
   replyMessage (replyToken, messages) {
@@ -112,26 +114,26 @@ class LineBot extends EventEmitter {
       'replyToken': `${replyToken}`,
       'messages': `${messages}`
     }
-    return this._request('post', replyEndpoint, payload).bind(this)
+    return this._request('post', replyEndpoint, payload)
   }
 
   getContent (messageId) {
     if (!messageId || typeof messageId !== 'string') return Promise.reject('No message Id.')
     const contentEndpoint = `/v2/bot/message/${messageId}/content`
-    return this._request('get', contentEndpoint, null).bind(this)
+    return this._request('get', contentEndpoint, null)
   }
 
   getProfile (userId) {
     if (!userId || typeof userId !== 'string') return Promise.reject('No user Id.')
     const profileEndpoint = `/v2/bot/profile/${userId}`
-    return this._request('get', profileEndpoint, null).bind(this)
+    return this._request('get', profileEndpoint, null)
   }
 
   leaveChannel (channel) {
     let channelId = channel && (channel.groupId || channel.roomId)
     if (!channelId) return Promise.reject('No channel Id.')
     const leaveEndpoint = channel.groupId ? `/v2/bot/group/${channel}/leave` : `/v2/bot/room/${channel}/leave`
-    return this._request('post', leaveEndpoint, null).bind(this)
+    return this._request('post', leaveEndpoint, null)
   }
 }
 
