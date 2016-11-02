@@ -9,6 +9,7 @@ class Webhook {
   constructor (token, opts = {}, callback, whCallback) {
     this.token = token
     this.callback = callback
+    this.events = 0
 
     const app = express()
     const APP_PORT = opts.port || DEFAULT_PORT
@@ -17,10 +18,11 @@ class Webhook {
     app.use(morgan('dev'))
     app.use(bodyParser.json())
     app.get(APP_ENDPOINT, (req, res) => {
-      res.send('listening on port ' + APP_PORT)
+      res.send('listening on port ' + APP_PORT + `, handled ${this.events} events.`)
     })
     app.post(APP_ENDPOINT, this._parseBody.bind(this))
     app.use((err, req, res, next) => {
+      console.log(err)
       res.status(500).send(err)
     })
     this._webserver = app
@@ -36,9 +38,9 @@ class Webhook {
     if (events) {
       // console.log(this)
       this.callback(events)
-      res.send('OK')
+      return res.send('OK')
     } else {
-      next('no events found')
+      return next('no events found')
       // return null
     }
   }
