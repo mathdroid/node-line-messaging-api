@@ -41,7 +41,7 @@ class LineBot extends EventEmitter {
   }
 
   _request (method, path, payload) {
-    return axios({
+    const opts = {
       method: method,
       headers: {
         'Content-Type': 'application/json',
@@ -49,7 +49,8 @@ class LineBot extends EventEmitter {
       },
       url: _baseUrl + path,
       data: payload || {}
-    })
+    }
+    return axios(opts).catch(err => err.response.data)
   }
 
   processEvents (events) {
@@ -100,8 +101,8 @@ class LineBot extends EventEmitter {
     messages = Array.isArray(messages) ? messages : [messages]
     if (messages.length < 1 || messages.length > 5) return Promise.reject('Invalid messages length. (1 - 5)')
     let payload = {
-      'to': `${channel}`,
-      'messages': `${messages}`
+      to: channel,
+      messages: messages
     }
     return this._request('post', pushEndpoint, payload)
   }
@@ -111,8 +112,8 @@ class LineBot extends EventEmitter {
     messages = Array.isArray(messages) ? messages : [messages]
     if (messages.length < 1 || messages.length > 5) return Promise.reject('Invalid messages length. (1 - 5)')
     let payload = {
-      'replyToken': `${replyToken}`,
-      'messages': messages
+      replyToken: replyToken,
+      messages: messages
     }
     return this._request('post', replyEndpoint, payload)
   }
