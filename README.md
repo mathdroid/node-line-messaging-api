@@ -96,6 +96,16 @@ By default, webhook will listen on port `5463`. You should change it if it inter
 
   - `.addAudio({originalUrl, duration})` // `originalUrl` must be a HTTPS link to m4a audio. `duration` is in milliseconds.
 
+  - `.addVideo({originalUrl, previewUrl})` // same as `.addImage` but mp4 < 10MB for the originalUrl.
+
+  - `.addLocation({title = 'My Location', address = 'Here\'s the location.', latitude, longitude})` // lat and lon is of `number` type
+
+  - `.addSticker({packageId, stickerId})` // both params are of number type. see https://devdocs.line.me/files/sticker_list.pdf
+
+  - `.addButtons({thumbnailImageUrl, altText, title, text, actions})` // Buttons template message. `actions` must follow Action template. length of `actions` <=4
+
+  - `.addConfirm({altText, text, actions})` // confirmation type. actions max length = 2
+
   - `.addVideo, etc` (WIP)
 
   - `.commit()` // returns the payload (array of messages)
