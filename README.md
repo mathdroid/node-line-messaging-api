@@ -88,9 +88,15 @@ By default, webhook will listen on port `5463`. You should change it if it inter
 
   - `new Messages()` // creates an empty array of messages. Maximum 5 messages following LINE's spec.
 
+  - `.addRaw(message)` // message Object following LINE's spec
+
   - `.addText(message)` // message may be a string or an object with .text property. Chainable.
 
-  - `.addImage, .addVideo, etc` (WIP)
+  - `.addImage({originalUrl, previewUrl})` // `originalUrl` and `previewUrl` must be a HTTPS link to a JPG or PNG image. (size < 1MB, width < 1024px)
+
+  - `.addAudio({originalUrl, duration})` // `originalUrl` must be a HTTPS link to m4a audio. `duration` is in milliseconds.
+
+  - `.addVideo, etc` (WIP)
 
   - `.commit()` // returns the payload (array of messages)
 

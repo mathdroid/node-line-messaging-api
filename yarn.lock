@@ -298,6 +298,10 @@ babel-plugin-syntax-exponentiation-operator@^6.8.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-exponentiation-operator/-/babel-plugin-syntax-exponentiation-operator-6.13.0.tgz#9ee7e8337290da95288201a6a57f4170317830de"
 
+babel-plugin-syntax-flow@^6.18.0, babel-plugin-syntax-flow@^6.5.0:
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-syntax-flow/-/babel-plugin-syntax-flow-6.18.0.tgz#4c3ab20a2af26aa20cd25995c398c4eb70310c8d"
+
 babel-plugin-syntax-object-rest-spread@^6.8.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-object-rest-spread/-/babel-plugin-syntax-object-rest-spread-6.13.0.tgz#fd6536f2bce13836ffa3a5458c4903a597bb3bf5"
@@ -499,6 +503,13 @@ babel-plugin-transform-exponentiation-operator@^6.3.13:
     babel-plugin-syntax-exponentiation-operator "^6.8.0"
     babel-runtime "^6.0.0"
 
+babel-plugin-transform-flow-strip-types@^6.7.0:
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-flow-strip-types/-/babel-plugin-transform-flow-strip-types-6.18.0.tgz#4d3e642158661e9b40db457c004a30817fa32592"
+  dependencies:
+    babel-plugin-syntax-flow "^6.18.0"
+    babel-runtime "^6.0.0"
+
 babel-plugin-transform-object-rest-spread@^6.16.0:
   version "6.16.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-object-rest-spread/-/babel-plugin-transform-object-rest-spread-6.16.0.tgz#db441d56fffc1999052fdebe2e2f25ebd28e36a9"
@@ -557,6 +568,13 @@ babel-preset-es2015:
     babel-plugin-transform-es2015-typeof-symbol "^6.6.0"
     babel-plugin-transform-es2015-unicode-regex "^6.3.13"
     babel-plugin-transform-regenerator "^6.16.0"
+
+babel-preset-flow:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/babel-preset-flow/-/babel-preset-flow-1.0.0.tgz#d66f5975c51cf0c7138ced2eef182d51cf585b25"
+  dependencies:
+    babel-plugin-syntax-flow "^6.5.0"
+    babel-plugin-transform-flow-strip-types "^6.7.0"
 
 babel-preset-stage-3:
   version "6.17.0"
@@ -1014,6 +1032,10 @@ find-versions@^1.0.0:
     get-stdin "^4.0.1"
     meow "^3.5.0"
     semver-regex "^1.0.0"
+
+flow-bin:
+  version "0.34.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.34.0.tgz#093ed36981e8fafc39d16f0b0878d0968aa80fad"
 
 follow-redirects@0.0.7:
   version "0.0.7"
