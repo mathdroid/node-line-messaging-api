@@ -72,6 +72,9 @@ class LineBot extends EventEmitter {
             if (result) rgx.callback(event, result)
           })
         } else {
+          if (event.message.type === 'audio' || event.message.type === 'video' || event.message.type === 'image') {
+            this.emit('message-with-content')
+          }
           this.emit('non-text', event)
           this.emit(event.message.type, event)
         }

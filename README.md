@@ -49,7 +49,9 @@ const _events = 'events' // emitted on all events, returns an array of events.
 
 const _eventTypes = ['message', 'follow', 'unfollow', 'join', 'leave', 'postback', 'beacon'] // emitted on parsing event types, returns that specific event.
 
-const _messageTypes = ['text', 'image', 'video', 'audio', 'location', 'sticker'] // emitted on parsing message types (more specific), returns that specific event (type === 'message').
+const _messageTypes = ['text', 'image', 'video', 'audio', 'location', 'sticker', 'non-text', 'message-with-content'] // emitted on parsing message types (more specific), returns that specific event (type === 'message').
+
+
 ```
 
 
