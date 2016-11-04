@@ -65,12 +65,15 @@ class LineBot extends EventEmitter {
     switch (event.type) {
       case 'message':
         this.emit('message', event)
-        this.emit(event.message.type, event)
         if (event.message.type === 'text' && event.message.text) {
+          this.emit('text', event)
           this._regexpCallback.forEach(rgx => {
             const result = rgx.regexp.exec(event.message.text)
             if (result) rgx.callback(event, result)
           })
+        } else {
+          this.emit('non-text', event)
+          this.emit(event.message.type, event)
         }
         break
       case 'follow':
