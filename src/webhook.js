@@ -2,11 +2,14 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
 
+import crypto from 'crypto'
+
 const DEFAULT_PORT = 5463 // LINE
 const DEFAULT_ENDPOINT = '/'
 
 class Webhook {
-  constructor (token, opts = {}, callback, whCallback) {
+  constructor (secret, token, opts = {}, callback, whCallback) {
+    this.secret = secret
     this.token = token
     this.callback = callback
     this.events = 0
@@ -14,9 +17,15 @@ class Webhook {
     const app = express()
     const APP_PORT = opts.port || DEFAULT_PORT
     const APP_ENDPOINT = opts.endpoint || DEFAULT_ENDPOINT
+    const IS_VERIFY_SIGNATURE = opts.verifySignature || false
 
     app.use(morgan('dev'))
-    app.use(bodyParser.json())
+    if (IS_VERIFY_SIGNATURE) {
+      app.use(bodyParser.json({verify: this._verifyRequest}))
+      app.use(this._abortOnError)
+    } else {
+      app.use(bodyParser.json())
+    }
     app.get(APP_ENDPOINT, (req, res) => {
       res.send('listening on port ' + APP_PORT + `, handled ${this.events} events.`)
     })
@@ -42,6 +51,31 @@ class Webhook {
     } else {
       next('no events found')
       // return null
+    }
+  }
+
+  _getSignature (buf) {
+    const hmac = crypto.createHmac('sha256', this.secret).update(buf, 'utf-8').digest('base64')
+    return hmac
+  }
+
+  _verifyRequest (req, res, buf, encoding) {
+    const expected = req.headers['X-Line-Signature']
+    const calculated = this._getSignature(buf)
+    console.log(`X-Line-Signature: ${expected}\nBody: ${buf.toString('utf8')}`)
+    if (expected !== calculated) {
+      throw new Error('Invalid signature.')
+    } else {
+      console.log('Valid Signature.')
+    }
+  }
+
+  _abortOnError (err, req, res, next) {
+    if (err) {
+      console.log(err)
+      res.status(400).send({error: 'Invalid signature.'})
+    } else {
+      next()
     }
   }
 }
