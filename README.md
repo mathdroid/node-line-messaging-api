@@ -17,7 +17,7 @@ const TOKEN = 'YOURTOKENHERE' // Line@ issued TOKEN
 
 const PORT = process.env.PORT || 3002
 
-let bot = new Bot(SECRET, TOKEN, {port: PORT})
+let bot = new Bot(SECRET, TOKEN, { webhook: { port: PORT } })
 
 // bot webhook succesfully started
 bot.on('webhook', w => console.log(`bot listens on port ${w}.`))
