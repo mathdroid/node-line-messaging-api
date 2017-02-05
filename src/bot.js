@@ -9,7 +9,7 @@ const _sourceTypes = ['user', 'group', 'room']
 
 const _baseUrl = 'https://api.line.me'
 
-class LineBot extends EventEmitter {
+export default class LineBot extends EventEmitter {
 
   static get eventTypes () {
     return _eventTypes
@@ -143,5 +143,3 @@ class LineBot extends EventEmitter {
     return this._request('post', leaveEndpoint, null)
   }
 }
-
-export default LineBot
