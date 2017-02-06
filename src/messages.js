@@ -152,7 +152,7 @@ class Messages {
       template: {
         type: 'buttons',
         thumbnailImageUrl,
-        title: title.slice(0, 39),
+        title: title && title.slice(0, 39),
         text: title ? text.slice(0, 59) : text.slice(0, 159),
         actions
       }
