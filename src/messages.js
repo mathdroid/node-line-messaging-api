@@ -174,6 +174,7 @@ class Messages {
         actions
       }
     })
+    return this
   }
 
   commit () {

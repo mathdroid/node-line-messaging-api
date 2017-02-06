@@ -1,11 +1,13 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
+import ngrok from 'ngrok'
 
 import crypto from 'crypto'
 
 const DEFAULT_PORT = 5463 // LINE
 const DEFAULT_ENDPOINT = '/'
+const DEFAULT_NGROK = false
 
 class Webhook {
   constructor (secret, token, opts = {}, callback, whCallback) {
@@ -17,6 +19,7 @@ class Webhook {
     const app = express()
     const APP_PORT = opts.port || DEFAULT_PORT
     const APP_ENDPOINT = opts.endpoint || DEFAULT_ENDPOINT
+    const APP_NGROK = opts.ngrok || DEFAULT_NGROK
     const IS_VERIFY_SIGNATURE = opts.verifySignature || false
 
     app.use(morgan('dev'))
@@ -36,7 +39,13 @@ class Webhook {
     })
     this._webserver = app
     this._webserver.listen(APP_PORT, (err) => {
-      if (!err) whCallback(APP_PORT)
+      if (!err) {
+        whCallback(APP_PORT)
+        if (APP_NGROK) ngrok.connect(APP_PORT, (err, url) => {
+          if (err) return
+          console.log(`Created ngrok tunnel at ${url}`)
+        })
+      }
     }).on('error', (err) => {
       console.error(err)
     })
