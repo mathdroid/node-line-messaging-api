@@ -28,9 +28,14 @@ export default class LineBot extends EventEmitter {
     this.secret = secret
     this.token = token
     this.options = options
-    this._Webhook = new Webhook(this.secret, this.token, this.options.webhook, this.processEvents.bind(this), (whPort) => {
-      this.emit('webhook', whPort)
-    })
+    this._Webhook = new Webhook(
+      this.secret,
+      this.token,
+      this.options.webhook,
+      this.processEvents.bind(this),
+      (whPort) => {
+        this.emit('webhook', whPort)
+      })
     this._regexpCallback = []
 
     this._request = this._request.bind(this)
@@ -50,11 +55,11 @@ export default class LineBot extends EventEmitter {
       url: _baseUrl + path,
       data: payload || {}
     }
-    return axios(opts).catch(err => err.response.data)
+    return axios(opts).catch(err => err.response)
   }
 
-  processEvents (events) {
-    this.emit('events', events)
+  processEvents (events, req) {
+    this.emit('events', events, req)
     // `events` is a Webhook Event Object -- https://devdocs.line.me/en/#webhook-event-object
     events.forEach(this.parseOneEvent.bind(this))
   }
@@ -105,7 +110,7 @@ export default class LineBot extends EventEmitter {
   pushMessage (channel, messages) {
     const pushEndpoint = '/v2/bot/message/push'
     messages = Array.isArray(messages) ? messages : [messages]
-    if (messages.length < 1 || messages.length > 5) return Promise.reject('Invalid messages length. (1 - 5)')
+    if (messages.length < 1 || messages.length > 5) return Promise.reject(`Invalid messages length. (1 - 5), the message was ${messages.length}`)
     let payload = {
       to: channel,
       messages: messages
@@ -116,7 +121,7 @@ export default class LineBot extends EventEmitter {
   replyMessage (replyToken, messages) {
     const replyEndpoint = '/v2/bot/message/reply'
     messages = Array.isArray(messages) ? messages : [messages]
-    if (messages.length < 1 || messages.length > 5) return Promise.reject('Invalid messages length. (1 - 5)')
+    if (messages.length < 1 || messages.length > 5) return Promise.reject(`Invalid messages length. (1 - 5), the message was ${messages.length}`)
     let payload = {
       replyToken: replyToken,
       messages: messages

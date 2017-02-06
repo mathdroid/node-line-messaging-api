@@ -47,7 +47,7 @@ class Webhook {
     if (events) {
       // console.log(this)
       res.send('OK')
-      this.callback(events)
+      this.callback(events, req)
       this.events++
     } else {
       next('no events found')
