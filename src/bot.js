@@ -65,13 +65,17 @@ export default class LineBot extends EventEmitter {
   }
 
   parseOneEvent (event) {
+    const { source: { type } } = event
     this.emit('event', event)
+    this.emit(`event:${type}`, event)
     event.type = event.type || ''
     switch (event.type) {
       case 'message':
         this.emit('message', event)
+        this.emit(`message:${type}`, event)
         if (event.message.type === 'text' && event.message.text) {
           this.emit('text', event)
+          this.emit(`text:${type}`, event)
           this._regexpCallback.forEach(rgx => {
             const result = rgx.regexp.exec(event.message.text)
             if (result) rgx.callback(event, result)
@@ -79,28 +83,36 @@ export default class LineBot extends EventEmitter {
         } else {
           if (event.message.type === 'audio' || event.message.type === 'video' || event.message.type === 'image') {
             this.emit('message-with-content')
+            this.emit(`message-with-content:${type}`, event)
           }
           this.emit('non-text', event)
+          this.emit(`non-text:${type}`, event)
           this.emit(event.message.type, event)
         }
         break
       case 'follow':
         this.emit('follow', event)
+        this.emit(`follow:${type}`, event)
         break
       case 'unfollow':
         this.emit('unfollow', event)
+        this.emit(`unfollow:${type}`, event)
         break
       case 'join':
         this.emit('join', event)
+        this.emit(`join:${type}`, event)
         break
       case 'leave':
         this.emit('leave', event)
+        this.emit(`leave:${type}`, event)
         break
       case 'postback':
         this.emit('postback', event)
+        this.emit(`postback:${type}`, event)
         break
       case 'beacon':
         this.emit('beacon', event)
+        this.emit(`beacon:${type}`, event)
         break
       default:
         break
