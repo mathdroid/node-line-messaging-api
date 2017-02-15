@@ -45,7 +45,7 @@ export default class LineBot extends EventEmitter {
     this._regexpCallback.push({regexp, callback})
   }
 
-  _request (method, path, payload) {
+  _request (method, path, payload, type) {
     const opts = {
       method: method,
       headers: {
@@ -55,6 +55,7 @@ export default class LineBot extends EventEmitter {
       url: _baseUrl + path,
       data: payload || {}
     }
+    if (type == 'content') opts.responseType = 'arraybuffer';
     return axios(opts).catch(err => err.response)
   }
 
@@ -144,7 +145,7 @@ export default class LineBot extends EventEmitter {
   getContent (messageId) {
     if (!messageId || typeof messageId !== 'string') return Promise.reject('No message Id.')
     const contentEndpoint = `/v2/bot/message/${messageId}/content`
-    return this._request('get', contentEndpoint, null)
+    return this._request('get', contentEndpoint, null, 'content')
   }
 
   getProfile (userId) {
