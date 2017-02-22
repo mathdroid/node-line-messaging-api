@@ -1,7 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
-import ngrok from 'ngrok'
+import localtunnel from 'localtunnel'
 
 import crypto from 'crypto'
 
@@ -15,6 +15,10 @@ class Webhook {
     this.token = token
     this.callback = callback
     this.events = 0
+
+    this._parseBody = this._parseBody.bind(this)
+    this._getSignature = this._getSignature.bind(this)
+    this._createTunnel = this._createTunnel.bind(this)
 
     const app = express()
     const APP_PORT = opts.port || DEFAULT_PORT
@@ -41,14 +45,23 @@ class Webhook {
     this._webserver.listen(APP_PORT, (err) => {
       if (!err) {
         whCallback(APP_PORT)
-        if (APP_NGROK) ngrok.connect(APP_PORT, (err, url) => {
-          if (err) return
-          console.log(`Created ngrok tunnel at ${url}`)
-        })
+        if (APP_NGROK) {
+          this._createTunnel(APP_PORT)
+        }
       }
     }).on('error', (err) => {
       console.error(err)
     })
+  }
+
+  _createTunnel (port) {
+    const tunnel = localtunnel(port, (err, {url}) => {
+      if (err) {
+        return console.log(`Failed to create tunnel. error: `, err)
+      }
+      console.log(`Tunnel created successfully at ${url}`)
+    })
+    this.tunnel = tunnel
   }
 
   _parseBody (req, res, next) {

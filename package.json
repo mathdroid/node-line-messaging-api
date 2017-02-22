@@ -30,8 +30,8 @@
     "body-parser": "^1.15.2",
     "eventemitter3": "^2.0.2",
     "express": "^4.14.0",
-    "morgan": "^1.7.0",
-    "ngrok": "^2.2.6"
+    "localtunnel": "^1.8.2",
+    "morgan": "^1.7.0"
   },
   "devDependencies": {
     "ava": "^0.18.1",
