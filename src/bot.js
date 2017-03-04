@@ -131,6 +131,21 @@ export default class LineBot extends EventEmitter {
     return this._request('post', pushEndpoint, payload)
   }
 
+  multicast(channels, messages) {
+    const multicastEndpoint = '/v2/bot/message/multicast'
+    if (!channels) return Promise.reject({error: {message: 'you must supply valid channels'}})
+    if (!messages) return Promise.reject({error: {message: 'you must supply messages to push'}})
+    messages = Array.isArray(messages) ? messages : [messages]
+    channels = Array.isArray(channels) ? channels : [channels]
+    if (messages.length < 1 || messages.length > 5) return Promise.reject(`Invalid messages length. (1 - 5), the message was ${messages.length}`)
+    if (channels.length < 1 || channels.length > 150) return Promise.reject(`Invalid channels length. (1 - 150), the recipients were too many (${channels.length})`)
+    let payload = {
+      to: channel,
+      messages: messages
+    }
+    return this._request('post', pushEndpoint, payload)
+  }
+
   replyMessage (replyToken, messages) {
     const replyEndpoint = '/v2/bot/message/reply'
     messages = Array.isArray(messages) ? messages : [messages]
