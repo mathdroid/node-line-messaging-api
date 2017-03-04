@@ -1,6 +1,6 @@
 {
   "name": "node-line-messaging-api",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "LINE Messaging API Unofficial SDK",
   "keywords": [
     "line",
