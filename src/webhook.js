@@ -7,13 +7,13 @@ import crypto from 'crypto'
 
 const DEFAULT_PORT = 5463 // LINE
 const DEFAULT_ENDPOINT = '/'
-const DEFAULT_NGROK = false
+const DEFAULT_TUNNEL = false
 
 class Webhook {
-  constructor (secret, token, opts = {}, callback, whCallback) {
+  constructor ({secret, token, webhookOpts = {}, onEvents, onWebhook, onTunnel}) {
     this.secret = secret
     this.token = token
-    this.callback = callback
+    this.onEvents = onEvents
     this.events = 0
 
     this._parseBody = this._parseBody.bind(this)
@@ -21,10 +21,10 @@ class Webhook {
     this._createTunnel = this._createTunnel.bind(this)
 
     const app = express()
-    const APP_PORT = opts.port || DEFAULT_PORT
-    const APP_ENDPOINT = opts.endpoint || DEFAULT_ENDPOINT
-    const APP_NGROK = opts.ngrok || DEFAULT_NGROK
-    const IS_VERIFY_SIGNATURE = opts.verifySignature || false
+    const APP_PORT = webhookOpts.port || DEFAULT_PORT
+    const APP_ENDPOINT = webhookOpts.endpoint || DEFAULT_ENDPOINT
+    const APP_TUNNEL = webhookOpts.tunnel || webhookOpts.ngrok || DEFAULT_TUNNEL
+    const IS_VERIFY_SIGNATURE = webhookOpts.verifySignature || false
 
     app.use(morgan('dev'))
     if (IS_VERIFY_SIGNATURE) {
@@ -44,9 +44,9 @@ class Webhook {
     this._webserver = app
     this._webserver.listen(APP_PORT, (err) => {
       if (!err) {
-        whCallback(APP_PORT)
-        if (APP_NGROK) {
-          this._createTunnel(APP_PORT)
+        onWebhook(APP_PORT)
+        if (APP_TUNNEL) {
+          this._createTunnel(APP_PORT).then(onTunnel).catch(onTunnel)
         }
       }
     }).on('error', (err) => {
@@ -55,13 +55,16 @@ class Webhook {
   }
 
   _createTunnel (port) {
-    const tunnel = localtunnel(port, (err, {url}) => {
-      if (err) {
-        return console.log(`Failed to create tunnel. error: `, err)
-      }
-      console.log(`Tunnel created successfully at ${url}`)
+    return new Promise((resolve, reject) => {
+      const tunnel = localtunnel(port, (err, {url}) => {
+        if (err) {
+          reject({err})
+        }
+        resolve({url})
+      })
+      this.tunnel = tunnel
     })
-    this.tunnel = tunnel
+
   }
 
   _parseBody (req, res, next) {
@@ -69,7 +72,7 @@ class Webhook {
     if (events) {
       // console.log(this)
       res.send('OK')
-      this.callback(events, req)
+      this.onEvents(events, req)
       this.events++
     } else {
       next('no events found')
