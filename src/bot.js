@@ -22,7 +22,7 @@ export default class LineBot extends EventEmitter {
     return _sourceTypes
   }
 
-  constructor (secret, token, options = {}) {
+  constructor ({secret, token, options = {}}) {
     super()
     this.secret = secret
     this.token = token
@@ -30,10 +30,10 @@ export default class LineBot extends EventEmitter {
     this._Webhook = new Webhook({
       secret,
       token,
-      webhookOpts: options.webhook,
+      options,
       onEvents: this.processEvents.bind(this),
-      onWebhook: (port) => {
-        this.emit('webhook', port)
+      onWebhook: (webhook) => {
+        this.emit('webhook', webhook)
       },
       onTunnel: (args) => {
         this.emit('tunnel', args)

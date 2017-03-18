@@ -10,7 +10,7 @@ const DEFAULT_ENDPOINT = '/'
 const DEFAULT_TUNNEL = false
 
 class Webhook {
-  constructor ({secret, token, webhookOpts = {}, onEvents, onWebhook, onTunnel}) {
+  constructor ({secret, token, options = {}, onEvents, onWebhook, onTunnel}) {
     this.secret = secret
     this.token = token
     this.onEvents = onEvents
@@ -21,10 +21,10 @@ class Webhook {
     this._createTunnel = this._createTunnel.bind(this)
 
     const app = express()
-    const APP_PORT = webhookOpts.port || DEFAULT_PORT
-    const APP_ENDPOINT = webhookOpts.endpoint || DEFAULT_ENDPOINT
-    const APP_TUNNEL = webhookOpts.tunnel || webhookOpts.ngrok || DEFAULT_TUNNEL
-    const IS_VERIFY_SIGNATURE = webhookOpts.verifySignature || false
+    const APP_PORT = options.port || DEFAULT_PORT
+    const APP_ENDPOINT = options.endpoint || DEFAULT_ENDPOINT
+    const APP_TUNNEL = options.tunnel || options.ngrok || DEFAULT_TUNNEL
+    const IS_VERIFY_SIGNATURE = options.verifySignature || false
 
     app.use(morgan('dev'))
     if (IS_VERIFY_SIGNATURE) {
@@ -44,7 +44,7 @@ class Webhook {
     this._webserver = app
     this._webserver.listen(APP_PORT, (err) => {
       if (!err) {
-        onWebhook(APP_PORT)
+        onWebhook({port: APP_PORT, endpoint: APP_ENDPOINT})
         if (APP_TUNNEL) {
           this._createTunnel(APP_PORT).then(onTunnel).catch(onTunnel)
         }
