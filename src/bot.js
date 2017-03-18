@@ -42,7 +42,8 @@ export default class LineBot extends EventEmitter {
       }
     })
     this._regexpCallback = []
-
+    this.getContentFromEvent = this.getContentFromEvent.bind(this)
+    this.getProfileFromEvent = this.getProfileFromEvent.bind(this)
     this._request = this._request.bind(this)
   }
 
@@ -61,7 +62,7 @@ export default class LineBot extends EventEmitter {
       data: payload || {}
     }
     if (type === 'content') opts.responseType = 'arraybuffer'
-    return axios(opts).catch(err => Promise.reject(err.response))
+    return axios(opts).then(({data}) => data).catch(({response: {data}}) => Promise.reject(data))
   }
 
   processEvents (events, req) {
@@ -168,10 +169,18 @@ export default class LineBot extends EventEmitter {
     return this._request('get', contentEndpoint, null, 'content')
   }
 
+  getContentFromEvent ({message: {id}}) {
+    return this.getContent(id)
+  }
+
   getProfile (userId) {
     if (!userId || typeof userId !== 'string') return Promise.reject(Error('No user Id.'))
     const profileEndpoint = `/v2/bot/profile/${userId}`
     return this._request('get', profileEndpoint, null)
+  }
+
+  getProfileFromEvent ({source, source: {type}}) {
+    return this.getProfile(source[`${type}Id`])
   }
 
   leaveChannel (channel) {
