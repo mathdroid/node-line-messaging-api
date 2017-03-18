@@ -18,6 +18,7 @@ class Webhook {
 
     this._parseBody = this._parseBody.bind(this)
     this._getSignature = this._getSignature.bind(this)
+    this._verifyRequest = this._verifyRequest.bind(this)
     this._createTunnel = this._createTunnel.bind(this)
 
     const app = express()

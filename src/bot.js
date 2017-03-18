@@ -24,6 +24,8 @@ export default class LineBot extends EventEmitter {
 
   constructor ({secret, token, options = {}}) {
     super()
+    if (!secret) throw new Error('Please supply a LINE Secret.')
+    if (!token) throw new Error('Please supply a LINE Token.')
     this.secret = secret
     this.token = token
     this.options = options
@@ -59,7 +61,7 @@ export default class LineBot extends EventEmitter {
       data: payload || {}
     }
     if (type === 'content') opts.responseType = 'arraybuffer'
-    return axios(opts).catch(err => err.response)
+    return axios(opts).catch(err => Promise.reject(err.response))
   }
 
   processEvents (events, req) {
