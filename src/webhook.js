@@ -86,13 +86,15 @@ class Webhook {
   }
 
   _verifyRequest (req, res, buf, encoding) {
-    const expected = req.headers['X-Line-Signature']
+    const lineHeaderName = 'X-Line-Signature'
+    const lineHeader = lineHeaderName.toLowerCase()
+    const expected = req.headers[lineHeader]
     const calculated = this._getSignature(buf)
-    console.log(`X-Line-Signature: ${expected}\nBody: ${buf.toString('utf8')}`)
+    // console.log(`X-Line-Signature: ${expected}\nBody: ${buf.toString('utf8')}`)
     if (expected !== calculated) {
       throw new Error('Invalid signature.')
-    } else {
-      console.log('Valid Signature.')
+    // } else {
+      // console.log('Valid Signature.')
     }
   }
 
