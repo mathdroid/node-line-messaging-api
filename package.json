@@ -17,7 +17,9 @@
     "watch": "npm run build && ava test --verbose --watch",
     "build": "babel src -d build",
     "dev": "nodemon --exec NODE_ENV=development babel-node src/index.js",
-    "start": "npm run build && NODE_ENV=production node build/index.js"
+    "start": "npm run build && NODE_ENV=production node build/index.js",
+    "lint": "eslint src",
+    "lint:fix": "eslint --fix src"
   },
   "author": "Muhammad Mustadi <muhammad.mustadi@gmail.com> (http://mustadi.xyz)",
   "license": "MIT",
@@ -38,6 +40,10 @@
     "babel-cli": "^6.16.0",
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-stage-3": "^6.17.0",
+    "eslint": "^3.18.0",
+    "eslint-config-standard": "^7.1.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^2.1.1",
     "nodemon": "^1.11.0"
   },
   "ava": {

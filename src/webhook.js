@@ -64,7 +64,6 @@ class Webhook {
       })
       this.tunnel = tunnel
     })
-
   }
 
   _parseBody (req, res, next) {

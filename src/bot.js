@@ -10,7 +10,6 @@ const _sourceTypes = ['user', 'group', 'room']
 const _baseUrl = 'https://api.line.me'
 
 export default class LineBot extends EventEmitter {
-
   static get eventTypes () {
     return _eventTypes
   }
@@ -59,7 +58,7 @@ export default class LineBot extends EventEmitter {
       url: _baseUrl + path,
       data: payload || {}
     }
-    if (type == 'content') opts.responseType = 'arraybuffer';
+    if (type === 'content') opts.responseType = 'arraybuffer'
     return axios(opts).catch(err => err.response)
   }
 
@@ -127,7 +126,7 @@ export default class LineBot extends EventEmitter {
   pushMessage (channel, messages) {
     const pushEndpoint = '/v2/bot/message/push'
     messages = Array.isArray(messages) ? messages : [messages]
-    if (messages.length < 1 || messages.length > 5) return Promise.reject(`Invalid messages length. (1 - 5), the message was ${messages.length}`)
+    if (messages.length < 1 || messages.length > 5) return Promise.reject(Error(`Invalid messages length. (1 - 5), the message was ${messages.length}`))
     let payload = {
       to: channel,
       messages: messages
@@ -135,25 +134,25 @@ export default class LineBot extends EventEmitter {
     return this._request('post', pushEndpoint, payload)
   }
 
-  multicast(channels, messages) {
+  multicast (channels, messages) {
     const multicastEndpoint = '/v2/bot/message/multicast'
-    if (!channels) return Promise.reject({error: {message: 'you must supply valid channels'}})
-    if (!messages) return Promise.reject({error: {message: 'you must supply messages to push'}})
+    if (!channels) return Promise.reject(Error('you must supply valid channels'))
+    if (!messages) return Promise.reject(Error('you must supply messages to push'))
     messages = Array.isArray(messages) ? messages : [messages]
     channels = Array.isArray(channels) ? channels : [channels]
-    if (messages.length < 1 || messages.length > 5) return Promise.reject(`Invalid messages length. (1 - 5), the message was ${messages.length}`)
-    if (channels.length < 1 || channels.length > 150) return Promise.reject(`Invalid channels length. (1 - 150), the recipients were too many (${channels.length})`)
+    if (messages.length < 1 || messages.length > 5) return Promise.reject(Error(`Invalid messages length. (1 - 5), the message was ${messages.length}`))
+    if (channels.length < 1 || channels.length > 150) return Promise.reject(Error(`Invalid channels length. (1 - 150), the recipients were too many (${channels.length})`))
     let payload = {
-      to: channel,
+      to: channels,
       messages: messages
     }
-    return this._request('post', pushEndpoint, payload)
+    return this._request('post', multicastEndpoint, payload)
   }
 
   replyMessage (replyToken, messages) {
     const replyEndpoint = '/v2/bot/message/reply'
     messages = Array.isArray(messages) ? messages : [messages]
-    if (messages.length < 1 || messages.length > 5) return Promise.reject(`Invalid messages length. (1 - 5), the message was ${messages.length}`)
+    if (messages.length < 1 || messages.length > 5) return Promise.reject(Error(`Invalid messages length. (1 - 5), the message was ${messages.length}`))
     let payload = {
       replyToken: replyToken,
       messages: messages
@@ -162,20 +161,20 @@ export default class LineBot extends EventEmitter {
   }
 
   getContent (messageId) {
-    if (!messageId || typeof messageId !== 'string') return Promise.reject('No message Id.')
+    if (!messageId || typeof messageId !== 'string') return Promise.reject(Error('No message Id.'))
     const contentEndpoint = `/v2/bot/message/${messageId}/content`
     return this._request('get', contentEndpoint, null, 'content')
   }
 
   getProfile (userId) {
-    if (!userId || typeof userId !== 'string') return Promise.reject('No user Id.')
+    if (!userId || typeof userId !== 'string') return Promise.reject(Error('No user Id.'))
     const profileEndpoint = `/v2/bot/profile/${userId}`
     return this._request('get', profileEndpoint, null)
   }
 
   leaveChannel (channel) {
     let channelId = channel && (channel.groupId || channel.roomId)
-    if (!channelId) return Promise.reject('No channel Id.')
+    if (!channelId) return Promise.reject(Error('No channel Id.'))
     const leaveEndpoint = channel.groupId ? `/v2/bot/group/${channel}/leave` : `/v2/bot/room/${channel}/leave`
     return this._request('post', leaveEndpoint, null)
   }
