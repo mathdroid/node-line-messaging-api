@@ -8,51 +8,81 @@ npm install --save node-line-messaging-api
 
 # Usage
 
+Example live bot ([`proofreader-dog`](https://github.com/mathdroid/proofreader-dog))
+
 ```js
-import Bot, { Messages } from 'node-line-messaging-api'
+const LineBot = require('node-line-messaging-api')
+const {secret, token} = require('../config')
+const {lint} = require('./api')
 
-const SECRET = 'YOURSECRETHERE' // Line@ APP SECRET
+const Messages = LineBot.Messages
+const PORT = process.env.PORT || 5050
 
-const TOKEN = 'YOURTOKENHERE' // Line@ issued TOKEN
+const dog = new LineBot({
+    secret,
+    token,
+    options: {
+        port: PORT,
+        tunnel: false,
+        verifySignature: true,
+        endpoint: '/'
+    }
+})
 
-const PORT = process.env.PORT || 3002
+dog.on('webhook', ({port, endpoint}) => {
+    console.log(`dog is online on http://localhost:${port}${endpoint}`)
+})
 
-let bot = new Bot(SECRET, TOKEN, { webhook: { port: PORT } })
+dog.on('tunnel', ({url}) => {
+    console.log(`tunnel to local machine created at ${url}`)
+})
 
-// bot webhook succesfully started
-bot.on('webhook', w => console.log(`bot listens on port ${w}.`))
-
-// on ANY events
-bot.on('events', e => console.dir(e))
-
-// on Message event
-bot.on('message', m => console.log(`incoming message: ${m.message}`))
-
-let msgs = new Messages()
-
-msgs.addText('HELLO WORLD!').addText({text: 'harambe4lyf'})
-
-bot.pushMessage('CHANNELXXXXXXXX', msgs.addText('FOO BAR BAZ').commit()) // HELLO WORLD! -- harambe4lyf -- FOO BAR BAZ
+dog.on('text', async event => {
+    try {
+        const {displayName} = await dog.getProfileFromEvent(event)
+        const {replyToken, message: {text}} = event
+        const {suggestions, typos} = await lint(text)
+        const replyText = `Woof! Hi ${displayName}!\n\nI've read your message:\n\n${text}`
+        const replyBalloon = new Messages().addText(replyText)
+        const reasons = suggestions.length && suggestions.map(({reason}) => reason).join('\n\n')
+        if (reasons) replyBalloon.addSticker({packageId: 1, stickerId: 15}).addText(`My dog-sense 🐕 has some suggestions:\n\n${reasons}`)
+        const words = typos.length && typos.map(({word, suggestions}) => `Error on word "${word}". Did you mean ${suggestions.join('/')}?`).join('\n\n')
+        if (words) replyBalloon.addSticker({packageId: 1, stickerId: 10}).addText(`🤔🔥 A bit of typographical errors:\n\n${words}`)
+        if (!reasons && !words) replyBalloon.addSticker({packageId: 1, stickerId: 14}).addText('Woof woof! I can\'t find any errors! 🐶 Nice job!')
+        dog.replyMessage(replyToken, replyBalloon.commit())
+    } catch ({message}) {
+        console.log(message)
+    }
+})
 
 ```
-
-There are some other events from `examples/` (WIP).
 
 ## Events
 
-Listen-able events (WIP):
+Listen-able events:
 
-```js
-const _webhook = 'webhook' // emitted when webhook listener is created successfully
+### `webhook`
 
-const _events = 'events' // emitted on all events, returns an array of events.
+Emitted when webhook listener is created successfully. Emits `{port, endpoint}`.
 
-const _eventTypes = ['message', 'follow', 'unfollow', 'join', 'leave', 'postback', 'beacon'] // emitted on parsing event types, returns that specific event.
+### `tunnel`
 
-const _messageTypes = ['text', 'image', 'video', 'audio', 'location', 'sticker', 'non-text', 'message-with-content'] // emitted on parsing message types (more specific), returns that specific event (type === 'message').
+Emitted when local tunnel is created successfully for development. Emits `{url}`.
+
+### `events`
+Emitted on all events, returns an array of `event`s.
 
 
-```
+### `event`
+Emitted on all events, returns an array of `event`s.
+
+### `message`, `follow`, `unfollow`, `join`, `leave`, `postback`, `beacon`
+
+Emitted on parsing event types, returns that specific event.
+
+### `text`, `image`, `video`, `audio`, `location`, `sticker`, `non-text`, `message-with-content`
+
+Emitted on parsing message types (more specific), returns that specific event. Can be made more specific according to source type. For example, `Bot.on('image:user', fn)` will run `fn` only if it receives an `image` message type from `user` source type (won't work in `group`s/`room`s).
 
 
 ## Webhook
@@ -70,11 +100,13 @@ By default, webhook will listen on port `5463`. You should change it if it inter
 
 - `LineBot`
 
-  - `new LineBot(secret, token, options)`
+  - `new LineBot({secret, token, options})`
 
   - `.on(event, function callback (eventContent) {})` // Standard event listener. Events are shown above.
 
   - `.onText(regexp, function callback (event, match) {})` // Executes callback everytime a message.text matches regexp
+
+  - `.multicast(channels, messages)` => Promise
 
   - `.replyMessage(replyToken, messages)` => Promise
 
@@ -83,6 +115,10 @@ By default, webhook will listen on port `5463`. You should change it if it inter
   - `.getContent(messageId)` => Promise
 
   - `.getProfile(userId)` => Promise
+
+  - `.getContentFromEvent(event)` => Promise
+
+  - `.getProfileFromEvent(event)` => Promise
 
   - `.leaveChannel({groupId, roomId})` => Promise //pick one between groupId or roomId
 
