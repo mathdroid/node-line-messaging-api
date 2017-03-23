@@ -138,6 +138,10 @@ class Messages {
   }
 
   addButtons ({thumbnailImageUrl, altText, title, text, actions}) {
+    if (!altText) {
+      console.error('altText must not be empty.')
+      return this
+    }
     if (this._payload.length === 5) {
       console.error('Maximum payload length is 5.')
       return this
