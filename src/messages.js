@@ -181,6 +181,34 @@ class Messages {
     return this
   }
 
+  addCarousel ({altText, columns}) {
+    if (!altText) {
+      console.error('altText must not be empty.')
+      return this
+    }
+    if (this._payload.length >= 5) {
+      console.error('Maximum payload length is 5.')
+      return this
+    }
+
+    this._payload.push({
+      type: 'template',
+      altText,
+      template: {
+        type: 'carousel',
+        columns: columns.slice(0, 4).map(({thumbnailImageUrl, title, text, actions}) => {
+          return ({
+            thumbnailImageUrl,
+            title,
+            text,
+            actions
+          })
+        })
+      }
+    })
+    return this
+  }
+
   commit () {
     return this._payload
   }

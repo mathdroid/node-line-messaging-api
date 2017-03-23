@@ -140,9 +140,11 @@ By default, webhook will listen on port `5463`. You should change it if it inter
 
   - `.addSticker({packageId, stickerId})` // both params are of number type. see https://devdocs.line.me/files/sticker_list.pdf
 
-  - `.addButtons({thumbnailImageUrl, altText, title, text, actions})` // Buttons template message. `actions` must follow Action template. length of `actions` <=4
+  - `.addButtons({thumbnailImageUrl, altText, title, text, actions})` // Buttons template message. `actions` is an array of [`action` objects](https://devdocs.line.me/en/#template-action). length of `actions` <=4
 
-  - `.addConfirm({altText, text, actions})` // confirmation type. actions max length = 2
+  - `.addConfirm({altText, text, actions})` // confirmation type. `actions` max length = 2
+
+  - `.addCarousel({altText, columns})` // where `columns` is an array of [`column` object](https://devdocs.line.me/en/#column-object). Column object is in the shape of `{thumbnailImageUrl, title, text, actions}`. `actions` is an array of [`action` objects](https://devdocs.line.me/en/#template-action).
 
   - `.addVideo, etc` (WIP)
 
