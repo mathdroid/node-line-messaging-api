@@ -8,6 +8,7 @@ const _messageTypes = ['text', 'image', 'video', 'audio', 'location', 'sticker']
 const _sourceTypes = ['user', 'group', 'room']
 
 const _baseUrl = 'https://api.line.me'
+const _baseUrlContent = 'https://api-data.line.me'
 
 export default class LineBot extends EventEmitter {
   static get eventTypes () {
@@ -52,13 +53,14 @@ export default class LineBot extends EventEmitter {
   }
 
   _request (method, path, payload, type) {
+    const url = (type === 'content') ? _baseUrlContent + path : _baseUrl + path
     const opts = {
       method: method,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.token}`
       },
-      url: _baseUrl + path,
+      url: url,
       data: payload || {}
     }
     if (type === 'content') opts.responseType = 'arraybuffer'
